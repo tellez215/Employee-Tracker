@@ -22,21 +22,32 @@ connection.connect(err => {
     if (err)
         throw err;
     console.log('Connected!');
-    afterConnection();
 });
 
+function options() {
+    inquirer
+        .prompt({
+            type: 'list',
+            message: 'What would you like to do?',
+            name: 'action',
+            choices: [
+                'View all employees',
+                'View all departments',
+                'View all roles',
+                'Add an employee',
+                'Add a department',
+                'Add a role',
+                'Update employee role',
+                'Delete an employee',
+                'EXIT'
+            ]
+        })
 
-afterConnection = () => {
-    console.log("*****************************")
-    console.log("*                           *")
-    console.log("*     EMPLOYEE MANAGER      *")
-    console.log("*                           *")
-    console.log("*****************************")
-    promptUser();
-};
 
 
 
+
+}
 
 
 
