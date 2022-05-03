@@ -1,6 +1,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
+const conTable = require('console.table');
 
 
 const PORT = process.env.PORT || 3001;
@@ -73,8 +74,39 @@ function options() {
             }
         })
 };
+options()
+
+function viewEmployees() {
+    var query = 'SELECT * FROM employee';
+    connection.query(query, function(err, res) {
+        if (err)
+            throw err;
+        console.log(res.length + ' Employees Displayed');
+        console.table('All Employees', res);
+        options();
+    })
+};
+
+function viewDepartments() {
+    var query = 'SELECT * FROM department';
+    connection.query(query, function(err, res) {
+        if (err)
+            throw err;
+        console.table('All Departments:', res);
+        options();
+    })
+};
 
 
+function viewRoles() {
+    var query = 'SELECT * FROM role';
+    connection.query(query, function(err, res) {
+        if (err)
+            throw err;
+        console.table('All Roles:', res);
+        options();
+    })
+};
 
 
 
