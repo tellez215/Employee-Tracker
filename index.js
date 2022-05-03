@@ -3,6 +3,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const conTable = require('console.table');
+const { type } = require('express/lib/response');
 
 
 // adding port and calling for express
@@ -166,7 +167,7 @@ function addEmployee() {
                         role_id = res[j].id;
                         console.log(role_id)
                     }
-
+                    // connects to the database and uses the 'insert into and set' to insert the new employee back into the table 
                     connection.query(
                         'INSERT INTO employee SET ?', {
                             first_name: answer.first_name,
@@ -187,11 +188,45 @@ function addEmployee() {
 }
 
 
+// adds new department and uses inquirer to ask the user what the new department name is and connect with the database to add new department into the table 
+function addDepartment() {
+    inquirer
+        .prompt([{
+            name: 'newDepartment',
+            type: 'input',
+            message: 'Which department to add?'
+        }]).then(function(answer) {
+            connection.query(
+                'INSERT INTO department SET ?', {
+                    name: answer.newDepartment
+                });
+            var query = 'SELECT * FROM department';
+            connection.query(query, function(err, res) {
+                if (err)
+                    throw err;
+                console.log('Succesfully Added!')
+                console.table('All departments:', res);
+                options();
+            })
+        })
+};
 
 
 
 
 
+
+
+
+
+
+
+
+// if user selects the 'EXIT' button then this function of 'exitApp' will execute will a simple '.end' and a message letting the user know that they have succesfully left or quit
+function exitApp() {
+    connection.end();
+    console.log('You have quit succesfully and are still on port 3001!')
+};
 
 
 app.listen(PORT, () => {
