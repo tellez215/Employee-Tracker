@@ -1,16 +1,20 @@
+// requiring express,mysql2,inquirer,and console.table
 const express = require('express');
 const mysql = require('mysql2');
 const inquirer = require('inquirer');
 const conTable = require('console.table');
 
 
+// adding port and calling for express
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+// Middleware
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 
 
+// creating a connection with mysql
 const connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -19,12 +23,15 @@ const connection = mysql.createConnection({
 });
 
 
+// console logging a succesful connection else throws error
 connection.connect(err => {
     if (err)
         throw err;
     console.log('Connected!');
 });
 
+
+// options menu using inquirer.prompt
 function options() {
     inquirer
         .prompt({
@@ -32,16 +39,17 @@ function options() {
             message: 'What would you like to do?',
             name: 'action',
             choices: [
-                'View all employees',
-                'View all departments',
-                'View all roles',
-                'Add an employee',
-                'Add a department',
-                'Add a role',
-                'Update employee role',
-                'Delete an employee',
-                'EXIT'
-            ]
+                    'View all employees',
+                    'View all departments',
+                    'View all roles',
+                    'Add an employee',
+                    'Add a department',
+                    'Add a role',
+                    'Update employee role',
+                    'Delete an employee',
+                    'EXIT'
+                ]
+                // decided to use switch cases instead of if statments and calling for them down below
         }).then(function(answer) {
             switch (answer.action) {
                 case 'View all employees':
@@ -76,6 +84,8 @@ function options() {
 };
 options()
 
+
+//calling for viewEmployee which displays current table of employees using the 'SELECT * FROM' method and use the connection to database and use console.table to display table 
 function viewEmployees() {
     var query = 'SELECT * FROM employee';
     connection.query(query, function(err, res) {
@@ -87,6 +97,8 @@ function viewEmployees() {
     })
 };
 
+
+// calling for viewDepartment and using the same method and using console.table to display current departments
 function viewDepartments() {
     var query = 'SELECT * FROM department';
     connection.query(query, function(err, res) {
@@ -98,6 +110,7 @@ function viewDepartments() {
 };
 
 
+// a function to display current roles and we used console.table and 'connection.query' to do this
 function viewRoles() {
     var query = 'SELECT * FROM role';
     connection.query(query, function(err, res) {
@@ -107,6 +120,74 @@ function viewRoles() {
         options();
     })
 };
+
+
+
+// Now to add an employee , we used the same steps and above and we are now creating a new inquirer prompt to as the user to input new information on the new employee they are adding
+function addEmployee() {
+    connection.query('SELECT * FROM role', function(err, res) {
+        if (err)
+            throw err;
+        inquirer
+            .prompt([{
+                    type: 'input',
+                    message: 'New employee first name?',
+                    name: 'first_name'
+                },
+                {
+                    type: 'input',
+                    message: 'New employee last name?',
+                    name: 'last_name'
+                },
+                {
+                    type: 'input',
+                    message: 'New employee managers ID?',
+                    name: 'manager_id'
+                },
+                {
+                    name: 'role',
+                    type: 'list',
+                    choices: function() {
+                        var roleArr = [];
+                        for (let i = 0; i < res.length; i++) {
+                            roleArr.push(res[i].title);
+                        }
+                        return roleArr;
+                    },
+                    message: 'New employees role?'
+                }
+
+
+
+            ]).then(function(answer) {
+                let role_id;
+                for (let j = 0; j < res.length; j++) {
+                    if (res[j].title == answer.role) {
+                        role_id = res[j].id;
+                        console.log(role_id)
+                    }
+
+                    connection.query(
+                        'INSERT INTO employee SET ?', {
+                            first_name: answer.first_name,
+                            last_name: answer.last_name,
+                            manager_id: answer.manager_id,
+                            role_id: role_id,
+                        },
+                        function(err) {
+                            if (err)
+                                throw err;
+                            console.log('Succesfully added!');
+                            options();
+                        }
+                    )
+                }
+            })
+    })
+}
+
+
+
 
 
 
