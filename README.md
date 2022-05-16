@@ -1,7 +1,7 @@
 # Employee-Tracker
 
 ## Description
-A database application that helps users view, add, and manage their departments, roles, and employees. This application is all back-end and has no front-end work.
+A database application that helps users view, add, and manage their departments, roles, and employees. This application is all back-end and has no front-end work. 
 
 ## Built with 
 ![MySQL](https://img.shields.io/badge/mysql-%2300f.svg?style=for-the-badge&logo=mysql&logoColor=white)
@@ -19,3 +19,7 @@ https://drive.google.com/file/d/1qYOR964iIYRIf24t73h2WRwDLhmM-G8G/view
 ![contact](./img/1%20(2).png)
 
 The image above is showing the creation of our database (db) and populated the tables with information 
+
+
+## License
+[MIT](./license.md)
